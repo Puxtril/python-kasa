@@ -46,6 +46,12 @@ class IotCamera(IotDevice):
         """Return whether device is on."""
         return True
 
+    async def set_alias(self, alias: str) -> dict:
+        await self._query_helper("smartlife.cam.ipcamera.system", "set_alias", {"value":alias})
+
+    async def reboot(self, delay: int = 1) -> None:
+        await self._query_helper("smartlife.cam.ipcamera.system", "set_reboot", {"delay":delay})
+
     async def wifi_scan(self) -> list[WifiNetwork]:
         response = await self._query_helper("smartlife.cam.ipcamera.wireless", "get_ap_list", {"scan":True,"scan_type":"fast"})
 
