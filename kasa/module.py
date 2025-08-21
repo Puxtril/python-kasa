@@ -69,6 +69,7 @@ if TYPE_CHECKING:
     from .iot import modules as iot
     from .smart import modules as smart
     from .smartcam import modules as smartcam
+    from .iot import linkiemodules as linkie
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -153,6 +154,9 @@ class Module(ABC):
 
     # SMARTCAM only modules
     Camera: Final[ModuleName[smartcam.Camera]] = ModuleName("Camera")
+
+    # LinkieCam modules
+    LinkieVideoControl: Final[ModuleName[linkie.VideoControl]] = ModuleName("LinkieVideoControl")
 
     def __init__(self, device: Device, module: str) -> None:
         self._device = device

@@ -11,6 +11,8 @@ from ..deviceconfig import DeviceConfig
 from ..protocols import BaseProtocol
 from ..device import WifiNetwork
 from .iotdevice import IotDevice, KasaException
+from ..module import Module
+from .linkiemodules import VideoControl
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,10 +23,6 @@ class IotCamera(IotDevice):
     # Enumerations
     key_types = ["NONE", "WEP", "WPA_PSK", "WPA2_PSK", "WEP64", "WEP128", "WPA_AUTO", "WPA3"]
     cipher_types = ["NONE", "TKIP", "AES", "AUTO", "CCMP"]
-
-    valid_resolutions = ["360P", "720P", "1080P"]
-    valid_qualities = ["low", "medium", "high"]
-    valid_framerates = [50, 60]
 
     valid_daynight_modes = ["day", "night", "auto"]
 
@@ -37,6 +35,11 @@ class IotCamera(IotDevice):
     ) -> None:
         super().__init__(host=host, config=config, protocol=protocol)
         self._device_type = DeviceType.Camera
+
+    async def _initialize_modules(self) -> None:
+        """Initialize modules."""
+        await super()._initialize_modules()
+        self.add_module(Module.LinkieVideoControl, VideoControl(self, "smartlife.cam.ipcamera.videoControl"))
 
     @property
     def time(self) -> datetime:
@@ -88,38 +91,6 @@ class IotCamera(IotDevice):
         # Should be {"smartlife.cam.ipcamera.wireless":{"set_uplink":{"err_code":0}}}
         # But often it just returns {}
         await self._query_helper("smartlife.cam.ipcamera.wireless", "set_uplink", {"encryption":"AUTO", "passphrase":password,"ssid":ssid,"wpa_mode":self.key_types[int(keytype)]})
-
-    # Video commands
-    async def get_video_resolution(self) -> str:
-        response = await self._query_helper("smartlife.cam.ipcamera.videoControl", "get_resolution")
-        if "value" not in response:
-            return ""
-        return response.get("value")[0]["resolution"]
-
-    async def set_video_resolution(self, resolution: str) -> None:
-        if resolution not in self.valid_resolutions:
-            return None
-        await self._query_helper("smartlife.cam.ipcamera.videoControl", "set_resolution", {"value":[{"channel": 1, "resolution": resolution}]})
-
-    async def get_video_quality(self) -> str:
-        response = await self._query_helper("smartlife.cam.ipcamera.videoControl", "get_channel_quality")
-        if "value" not in response:
-            return ""
-        return response.get("value")[0]["quality"]
-
-    async def set_video_quality(self, quality: str) -> None:
-        if quality not in self.valid_qualities:
-            return None
-        await self._query_helper("smartlife.cam.ipcamera.videoControl", "set_channel_quality", {"value":[{"channel": 1, "quality": quality}]})
-
-    async def get_framerate(self) -> int:
-        response = await self._query_helper("smartlife.cam.ipcamera.videoControl", "get_power_frequency")
-        return response.get("value")
-
-    async def set_framerate(self, framerate: int) -> int:
-        if framerate not in self.valid_framerates:
-            return None
-        await self._query_helper("smartlife.cam.ipcamera.videoControl", "set_power_frequency", {"value": framerate})
 
     # SD Card
     @dataclass
