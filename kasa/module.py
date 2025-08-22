@@ -158,6 +158,7 @@ class Module(ABC):
     # LinkieCam modules
     LinkieVideoControl: Final[ModuleName[linkie.VideoControl]] = ModuleName("LinkieVideoControl")
     LinkieSDCard: Final[ModuleName[linkie.SDCard]] = ModuleName("LinkieSDCard")
+    LinkieStreamToggle: Final[ModuleName[linkie.StreamToggle]] = ModuleName("LinkieStreamToggle")
     LinkieNightVision: Final[ModuleName[linkie.NightVision]] = ModuleName("LinkieNightVision")
 
     def __init__(self, device: Device, module: str) -> None:
