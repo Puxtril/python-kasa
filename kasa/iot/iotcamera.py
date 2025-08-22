@@ -12,7 +12,7 @@ from ..protocols import BaseProtocol
 from ..device import WifiNetwork
 from .iotdevice import IotDevice, KasaException
 from ..module import Module
-from .linkiemodules import VideoControl, SDCard
+from .linkiemodules import VideoControl, SDCard, NightVision
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,6 +41,7 @@ class IotCamera(IotDevice):
         await super()._initialize_modules()
         self.add_module(Module.LinkieVideoControl, VideoControl(self, "smartlife.cam.ipcamera.videoControl"))
         self.add_module(Module.LinkieSDCard, SDCard(self, "smartlife.cam.ipcamera.sdCard"))
+        self.add_module(Module.LinkieNightVision, NightVision(self, "smartlife.cam.ipcamera.dayNight"))
 
     @property
     def time(self) -> datetime:
@@ -92,13 +93,3 @@ class IotCamera(IotDevice):
         # Should be {"smartlife.cam.ipcamera.wireless":{"set_uplink":{"err_code":0}}}
         # But often it just returns {}
         await self._query_helper("smartlife.cam.ipcamera.wireless", "set_uplink", {"encryption":"AUTO", "passphrase":password,"ssid":ssid,"wpa_mode":self.key_types[int(keytype)]})
-
-    # Day/Night Camera Mode
-    async def get_mode(self) -> str:
-        response = await self._query_helper("smartlife.cam.ipcamera.dayNight", "get_mode")
-        return response.get("value")
-
-    async def set_mode(self, mode: str) -> None:
-        if mode not in self.valid_daynight_modes:
-            return None
-        await self._query_helper("smartlife.cam.ipcamera.dayNight", "set_mode", {"value": mode})
