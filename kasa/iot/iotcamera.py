@@ -12,7 +12,7 @@ from ..protocols import BaseProtocol
 from ..device import WifiNetwork
 from .iotdevice import IotDevice, KasaException
 from ..module import Module
-from .linkiemodules import VideoControl
+from .linkiemodules import VideoControl, SDCard
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,6 +40,7 @@ class IotCamera(IotDevice):
         """Initialize modules."""
         await super()._initialize_modules()
         self.add_module(Module.LinkieVideoControl, VideoControl(self, "smartlife.cam.ipcamera.videoControl"))
+        self.add_module(Module.LinkieSDCard, SDCard(self, "smartlife.cam.ipcamera.sdCard"))
 
     @property
     def time(self) -> datetime:
@@ -91,25 +92,6 @@ class IotCamera(IotDevice):
         # Should be {"smartlife.cam.ipcamera.wireless":{"set_uplink":{"err_code":0}}}
         # But often it just returns {}
         await self._query_helper("smartlife.cam.ipcamera.wireless", "set_uplink", {"encryption":"AUTO", "passphrase":password,"ssid":ssid,"wpa_mode":self.key_types[int(keytype)]})
-
-    # SD Card
-    @dataclass
-    class SDState:
-        detect_state: str
-        free: str
-        reserve_capacity: str
-        sd_capacity: str
-        state: str
-        total: str
-        used: str
-
-    async def get_sd_state(self):
-        response = await self._query_helper("smartlife.cam.ipcamera.sdCard", "get_sd_card_state")
-        return SDState(**response)
-
-    async def format_sd(self):
-        await self._query_helper("smartlife.cam.ipcamera.sdCard", "set_format_sd_card")
-
 
     # Day/Night Camera Mode
     async def get_mode(self) -> str:
