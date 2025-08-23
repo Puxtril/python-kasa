@@ -21,7 +21,7 @@ class VideoControl(IotModule):
                 attribute_getter="video_resolution",
                 attribute_setter="set_video_resolution",
                 choices_getter="video_resolutions",
-                category=Feature.Category.Primary,
+                category=Feature.Category.Config,
                 type=Feature.Type.Choice,
             )
         )

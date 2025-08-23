@@ -13,7 +13,7 @@ class StreamToggle(IotModule):
                 attribute_getter="get_enabled",
                 attribute_setter="set_enabled",
                 type=Feature.Type.Switch,
-                category=Feature.Category.Config,
+                category=Feature.Category.Primary,
             )
         )
 
@@ -27,11 +27,11 @@ class StreamToggle(IotModule):
     @property
     def get_enabled(self) -> bool:
         """Return current led status."""
-        if self.data.get("value") == "on":
+        if self.data.get("get_is_enable").get("value") == "on":
             return True
         return False
 
     async def set_enabled(self, enable: bool) -> dict:
         """Set led."""
         send_val = "on" if enable else "off"
-        self.call("set_is_enable", {"value": send_val})
+        await self.call("set_is_enable", {"value": send_val})

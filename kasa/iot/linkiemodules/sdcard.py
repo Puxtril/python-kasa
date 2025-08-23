@@ -59,30 +59,10 @@ class SDCard(IotModule):
             self._add_feature(
                 Feature(
                     self._device,
-                    id="sd_capacity",
-                    name="SDCard Capacity",
+                    id="sd_storage",
+                    name="SDCard Used",
                     container=self,
-                    attribute_getter="get_size_free",
-                    type=Feature.Type.Sensor
-                )
-            )
-            self._add_feature(
-                Feature(
-                    self._device,
-                    id="sd_used",
-                    name="SDCard Used Space",
-                    container=self,
-                    attribute_getter="get_size_used",
-                    type=Feature.Type.Sensor
-                )
-            )
-            self._add_feature(
-                Feature(
-                    self._device,
-                    id="sd_free",
-                    name="SDCard Free Space",
-                    container=self,
-                    attribute_getter="get_size_free",
+                    attribute_getter="size_desc",
                     type=Feature.Type.Sensor
                 )
             )
@@ -99,20 +79,35 @@ class SDCard(IotModule):
         return self.data.get("get_sd_card_state").get("state")
     
     @property
-    def get_size_capacity(self) -> str | None:
+    def size_desc(self) -> str | None:
+        return f"{self.used} / {self.capacity}"
+        
+    
+    @property
+    def capacity(self) -> str | None:
         """Technically there is another property `sd_capacity`, but it doesn't include reserved space.
-        To make it clearer to uses how much space is available for *their* use, this value is used instead.
+        To make it clearer how much space is available for *user* use, this value is returned.
         """
         return self.data.get("get_sd_card_state").get("total")
 
     @property
-    def get_size_used(self) -> str | None:
+    def used(self) -> str | None:
         return self.data.get("get_sd_card_state").get("used")
 
-    @property
-    def get_size_free(self) -> str | None:
-        return self.data.get("get_sd_card_state").get("free")
-    
+    """
+    File "/home/___/Documents/Programming/python-kasa/.venv/lib/python3.13/site-packages/asyncclick/core.py", line 824, in invoke
+        rv = await rv
+            ^^^^^^^^
+    File "/home/___/Documents/Programming/python-kasa/kasa/cli/feature.py", line 128, in feature
+        echo(response)
+        ~~~~^^^^^^^^^^
+    File "/home/___/Documents/Programming/python-kasa/kasa/cli/common.py", line 55, in echo
+        _echo(*args, **kwargs)
+        ~~~~~^^^^^^^^^^^^^^^^^
+    File "/home/___/Documents/Programming/python-kasa/kasa/cli/common.py", line 43, in wrapper
+        message = rich_formatting.sub("", message)
+    TypeError: expected string or bytes-like object, got 'dict'
+    """
     async def format(self) -> dict:
         """Re-format the SD Card"""
         return await self.call("set_format_sd_card")

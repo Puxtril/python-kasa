@@ -18,7 +18,7 @@ class NightVision(IotModule):
                 attribute_getter="night_mode",
                 attribute_setter="set_night_mode",
                 choices_getter="night_modes",
-                category=Feature.Category.Primary,
+                category=Feature.Category.Config,
                 type=Feature.Type.Choice,
             )
         )
@@ -47,4 +47,4 @@ class NightVision(IotModule):
             raise ValueError(
                 f"Night mode must be one of {', '.join(self.night_modes)}: {mode}"
             )
-        return await self.call("set_resolution", {"value": mode})
+        return await self.call("set_mode", {"value": mode})
