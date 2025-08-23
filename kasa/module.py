@@ -156,7 +156,7 @@ class Module(ABC):
     Camera: Final[ModuleName[smartcam.Camera]] = ModuleName("Camera")
 
     # LinkieCam modules
-    LinkieVideoControl: Final[ModuleName[linkie.VideoControl]] = ModuleName("LinkieVideoControl")
+    LinkieVideoQuality: Final[ModuleName[linkie.VideoQuality]] = ModuleName("LinkieVideoQuality")
     LinkieSDCard: Final[ModuleName[linkie.SDCard]] = ModuleName("LinkieSDCard")
     LinkieStreamToggle: Final[ModuleName[linkie.StreamToggle]] = ModuleName("LinkieStreamToggle")
     LinkieNightVision: Final[ModuleName[linkie.NightVision]] = ModuleName("LinkieNightVision")

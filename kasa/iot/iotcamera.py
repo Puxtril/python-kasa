@@ -12,7 +12,7 @@ from ..protocols import BaseProtocol
 from ..device import WifiNetwork
 from .iotdevice import IotDevice, KasaException
 from ..module import Module
-from .linkiemodules import VideoControl, SDCard, NightVision, StreamToggle
+from .linkiemodules import VideoQuality, SDCard, NightVision, StreamToggle
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class IotCamera(IotDevice):
     async def _initialize_modules(self) -> None:
         """Initialize modules."""
         await super()._initialize_modules()
-        self.add_module(Module.LinkieVideoControl, VideoControl(self, "smartlife.cam.ipcamera.videoControl"))
+        self.add_module(Module.LinkieVideoQuality, VideoQuality(self, "smartlife.cam.ipcamera.videoControl"))
         self.add_module(Module.LinkieSDCard, SDCard(self, "smartlife.cam.ipcamera.sdCard"))
         self.add_module(Module.LinkieStreamToggle, StreamToggle(self, "smartlife.cam.ipcamera.switch"))
         self.add_module(Module.LinkieNightVision, NightVision(self, "smartlife.cam.ipcamera.dayNight"))
