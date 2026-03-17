@@ -16,6 +16,7 @@ from .linecrossingdetection import LineCrossingDetection
 from .matter import Matter
 from .meowdetection import MeowDetection
 from .motiondetection import MotionDetection
+from .osd import OSD
 from .pantilt import PanTilt
 from .persondetection import PersonDetection
 from .petdetection import PetDetection
@@ -36,6 +37,7 @@ __all__ = [
     "Led",
     "LineCrossingDetection",
     "MeowDetection",
+    "OSD",
     "PanTilt",
     "PersonDetection",
     "PetDetection",
